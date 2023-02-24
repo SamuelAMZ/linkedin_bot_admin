@@ -1,1 +1,4 @@
-@import "./global/general", "../pages/Home/home", "../pages/NotFound/notfound";
+@import "./global/general", "../pages/Home/home", "../pages/NotFound/notfound",
+  "../components/Header/header", "../components/Sidebar/sidebar",
+  "../components/Sidemenu/sidemenu", "../pages/Login/login",
+  "../pages/Register/register";
