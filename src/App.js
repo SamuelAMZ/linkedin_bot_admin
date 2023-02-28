@@ -6,21 +6,30 @@ import "./styles/tailwind.css";
 import "./styles/index.min.css";
 // react query
 import { QueryClient, QueryClientProvider } from "react-query";
-
-// pages
-import Home from "./pages/Home/Home";
-import NotFound from "./pages/NotFound/NotFound";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
-import Linkedin from "./pages/Linkedin/Linkedin";
-
+// auths
+import Auth from "./components/Auth/Auth";
 // components
 import Sidebar from "./components/Sidebar/Sidebar";
+// pages
+import Login from "./pages/Login/Login";
+import NotFound from "./pages/404/NotFound";
+import Home from "./pages/Home/Home";
+import NewSearch from "./pages/NewSearch/NewSearch";
+import Linkedin from "./pages/Linkedin/Linkedin";
+import Indeed from "./pages/Indeed/Indeed";
+import Settings from "./pages/Settings/Settings";
+import Analytics from "./pages/Analitycs/Analitycs";
+import Logout from "./pages/Logout/Logout";
+import Account from "./pages/Account/Account";
+
+// subpages
+import SingleSearch from "./pages/SingleSearch/SingleSearch";
+import CreateNewAccount from "./pages/Account/CreateNew/CreateNewAccount";
 
 // contexts
-import { MenuOpenProvider } from "./contexts/MenuOpen";
+import { UserProvider } from "./contexts/UserContext";
 
-function App() {
+const App = () => {
   // react query
   const client = new QueryClient();
 
@@ -28,11 +37,14 @@ function App() {
     <>
       <QueryClientProvider client={client}>
         <>
+          {/* auth */}
+          {/* <Auth /> */}
+
           {/* component code */}
           <div className="site-container">
             <div className="notif"></div>
 
-            <MenuOpenProvider>
+            <UserProvider>
               {/* sidebar */}
               <Sidebar />
 
@@ -41,19 +53,35 @@ function App() {
                 <Routes>
                   {/* auth pages */}
                   <Route path="/" exact element={<Login />} />
-                  <Route path="/register" exact element={<Register />} />
-                  <Route path="/linkedin" exact element={<Linkedin />} />
+
+                  {/* dashboad pages */}
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/new" element={<NewSearch />} />
+                  <Route path="/linkedin" element={<Linkedin />} />
+                  <Route path="/indeed" element={<Indeed />} />
+                  <Route path="/analytics" element={<Analytics />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/account" element={<Account />}>
+                    <Route
+                      path="/account/new-account"
+                      element={<CreateNewAccount />}
+                    />
+                  </Route>
+                  <Route path="/logout" element={<Logout />} />
+
+                  {/* single search page */}
+                  <Route path="/search/:searchid" element={<SingleSearch />} />
 
                   {/* 404 */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </div>
-            </MenuOpenProvider>
+            </UserProvider>
           </div>
         </>
       </QueryClientProvider>
     </>
   );
-}
+};
 
 export default App;

@@ -15,7 +15,7 @@ const NotFound = () => {
   return (
     <div className="centerer notfound">
       <h1>404</h1>
-      <Link to={"/"}>
+      <Link to={"/home"}>
         <button className="btn btn-primary">Go back to home</button>
       </Link>
     </div>

@@ -1,117 +1,145 @@
 //imports
-@use "../../styles/global/breakpoints" as b;
 @import "../../styles/global/variables";
 
 .sidebar {
-  display: none;
   position: relative;
   background-color: $white;
   width: 100%;
   height: 100%;
   overflow: auto;
   color: $second;
-
-  @include b.breakpoint("1280") {
-    display: block;
-  }
+  border-right: 2px solid $border;
 
   .heading {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem 0;
+    padding: 1.3rem 2.1rem;
+    margin-bottom: 1rem;
 
     h1 {
-      font-size: 40px;
-    }
-    img {
-      width: 70% !important;
-      height: auto;
-      padding-left: 1.5rem;
+      font-size: 20px;
     }
   }
 
   .menu-container {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+
+    // user box
+    .user-box {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      border-bottom: 2px solid $border;
+      padding: 0;
+      padding-bottom: 10px;
+      width: calc(100% - 4.2rem);
+      margin: 0 auto;
+      margin-bottom: 1rem;
+
+      .user-img {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+      }
+      .user-details {
+        display: flex;
+        flex-direction: column;
+
+        h3 {
+          font-size: 14px;
+          font-weight: 500;
+        }
+        p {
+          font-size: 11px;
+          font-weight: 400;
+        }
+      }
+    }
+
+    // new search btn
+    .new-sidebar {
+      background-color: $accent;
+      padding: 0;
+      padding-bottom: 10px;
+      width: calc(100% - 4.2rem);
+      margin: 0 auto;
+      margin-bottom: 2rem;
+      margin-top: 2rem;
+      border-radius: 20px;
+
+      li {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        color: $white;
+        font-size: 30px;
+        margin-bottom: -10px;
+
+        p {
+          font-size: 15px;
+        }
+        svg {
+          color: $white;
+        }
+      }
+    }
 
     li {
       width: 100%;
       display: flex;
       flex-direction: row;
       align-items: center;
-      padding: 1rem 1.5rem;
+      padding: 1rem 2.1rem;
       cursor: pointer;
-
-      gap: 0.7rem;
+      font-size: 19px;
+      gap: 0.9rem;
 
       p {
-        font-size: 17px;
-        font-weight: 400;
-        line-height: 1.8;
-        color: #2a303c;
-      }
-
-      &:hover {
-        background-color: #d6d6d736;
-        border-left: 5px solid #18181850;
-        padding: 1rem calc(1.5rem - 5px);
+        font-size: 14px;
+        font-weight: 500;
       }
 
       &.active-menu {
-        background-color: #d6d6d736;
         border-left: 5px solid $accent;
+        padding: 1rem calc(2.1rem - 5px);
+        color: $accent;
+
+        svg {
+          color: $accent;
+        }
       }
     }
-    li.active-menu {
-      padding: 1rem calc(1.5rem - 5px);
-    }
 
-    .icon-wrap {
-      width: 30px;
-      height: 30px;
-      background-color: white;
-      box-shadow: 0 0 10px 5px rgba(16, 16, 29, 0.122);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-radius: 5px;
-      opacity: 0.7;
-    }
     svg {
-      color: $dash;
-      font-size: 15px;
+      color: #a5b4cb;
     }
   }
 }
 
 .seperator-element {
-  height: 0.5px;
+  height: 2px;
   margin: 2rem 1.5rem;
-  background-color: $dash;
-  opacity: 0.4;
+  background-color: $border;
 }
 
 .logout {
   position: absolute;
   bottom: 1.5rem;
   width: 82%;
-  margin: 0 1.5rem;
-
-  li {
-    border: 1px solid $dash;
-    border-radius: 15px;
-    margin: 0 auto;
-    padding: 0.7rem 1rem !important;
-  }
-  li:hover {
-    background-color: transparent !important;
-  }
-
+  // margin: 0 2.1rem;
   p {
     text-transform: capitalize !important;
   }
