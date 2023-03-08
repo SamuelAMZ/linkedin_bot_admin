@@ -46,7 +46,7 @@ const Table = ({ conf }) => {
   const {
     data: tableData,
     isLoading: tableLoading,
-    status,
+    error,
     refetch: getPaginate,
   } = useQuery(
     [location.pathname, pageNumber, searchKeyword, conf.refresh],
@@ -160,17 +160,29 @@ const Table = ({ conf }) => {
       {/* header */}
       <div
         className={
-          conf && conf.target !== "searches"
+          conf && conf.target !== "linkedin-jobs"
             ? "table-header expand-search"
             : "table-header"
         }
       >
-        {/* searches */}
-        {conf && conf.target === "searches" && (
+        {/* linkedin-jobs */}
+        {conf && conf.target === "linkedin-jobs" && (
           <div className="actions">
-            <button className="btn changed">
-              <IoFilter /> <p>Actions</p>
-            </button>
+            <div className="dropdown dropdown-bottom dropdown-start">
+              <button className="btn changed">
+                <IoFilter /> <p>Actions</p>
+              </button>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+              >
+                <li>
+                  <a>Select All</a>
+                  <a>Deselect All</a>
+                  <a>Remove</a>
+                </li>
+              </ul>
+            </div>
             <a href="/new">
               <button className="btn btn-primary">
                 <BsPlusLg /> <p>New Search</p>
@@ -181,37 +193,35 @@ const Table = ({ conf }) => {
             )}
           </div>
         )}
-        {/* domains */}
-        {conf && conf.target !== "searches" && (
-          <div className="actions">
-            {tableData && tableData.code === "ok" && (
-              <p>{tableData.payload.totalItemsLength} Items</p>
-            )}
+
+        {/* search form */}
+        {!(error || tableData?.payload === "table conf error") && (
+          <div className="search">
+            <form onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="Search in table"
+                className="input input-bordered w-full"
+                value={searchKeyword}
+                onChange={(e) => {
+                  setPageNumber("0");
+                  setSearchKeyword(e.target.value);
+                }}
+              />
+              <button className="btn btn-primary">
+                <FiSearch />
+              </button>
+            </form>
           </div>
         )}
-        <div className="search">
-          <form onSubmit={handleSearch}>
-            <input
-              type="text"
-              placeholder="Search in table"
-              className="input input-bordered w-full"
-              value={searchKeyword}
-              onChange={(e) => {
-                setPageNumber("0");
-                setSearchKeyword(e.target.value);
-              }}
-            />
-            <button className="btn btn-primary">
-              <FiSearch />
-            </button>
-          </form>
-        </div>
       </div>
 
       {/* table */}
       <table className="table table-zebra w-full">
         {/* thead*/}
-        {conf && conf.target === "searches" ? (
+        {conf &&
+        conf.target === "linkedin-jobs" &&
+        !(tableData?.payload === "nothing") ? (
           <thead>
             <tr>
               <th>
@@ -263,10 +273,21 @@ const Table = ({ conf }) => {
               );
             })}
 
-          {/* actual data */}
-          {/* searches */}
+          {/* error on nothing found */}
+          {(error ||
+            tableData?.payload === "nothing" ||
+            tableData?.payload === "table conf error") && (
+            <>
+              <div className="nodata">
+                <img src="/img/nodata.png" alt="no data found" />
+                <h3>No record found</h3>
+              </div>
+            </>
+          )}
+
+          {/* linkedin-jobs */}
           {tableData &&
-            conf.target === "searches" &&
+            conf.target === "linkedin-jobs" &&
             tableData.code === "ok" &&
             tableData.payload.list.map((elm, idx) => {
               return (
@@ -284,13 +305,7 @@ const Table = ({ conf }) => {
                     </Link>
                   </td>
                   <td>{elm.status}</td>
-                  <td>
-                    {elm.tab
-                      ? elm.tab === "both"
-                        ? `${elm.tab} tabs`
-                        : `${elm.tab} tab`
-                      : "Linkedin"}
-                  </td>
+                  <td>Linkedin</td>
                   <td>{elm.createdAt.split("T")[0]}</td>
                   <td>
                     <div className="actions">
@@ -298,74 +313,6 @@ const Table = ({ conf }) => {
                         <AiOutlineEdit />
                       </Link>
                     </div>
-                  </td>
-                </tr>
-              );
-            })}
-
-          {/* domains*/}
-          {tableData &&
-            conf.target === "domains" &&
-            tableData.code === "ok" &&
-            tableData.payload.list.map((elm, idx) => {
-              return (
-                <tr key={idx}>
-                  <td>
-                    {elm.domains.substr(0, 50)}
-                    {elm.domains.length >= 50 && "..."}
-                  </td>
-                  <td>
-                    {removing ? (
-                      <button
-                        id={elm._id}
-                        className="btn btn-primary btn-sm small-remove"
-                        disabled
-                      >
-                        Remove
-                      </button>
-                    ) : (
-                      <button
-                        id={elm._id}
-                        onClick={(e) => handleRemove(e, "domains")}
-                        className="btn btn-primary btn-sm small-remove"
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-
-          {/* urls */}
-          {tableData &&
-            conf.target === "urls" &&
-            tableData.code === "ok" &&
-            tableData.payload.list.map((elm, idx) => {
-              return (
-                <tr key={idx}>
-                  <td>
-                    {elm.urls.substr(0, 50)}
-                    {elm.urls.length >= 50 && "..."}
-                  </td>
-                  <td>
-                    {removing ? (
-                      <button
-                        id={elm._id}
-                        className="btn btn-primary btn-sm small-remove"
-                        disabled
-                      >
-                        Remove
-                      </button>
-                    ) : (
-                      <button
-                        id={elm._id}
-                        onClick={(e) => handleRemove(e, "urls")}
-                        className="btn btn-primary btn-sm small-remove"
-                      >
-                        Remove
-                      </button>
-                    )}
                   </td>
                 </tr>
               );

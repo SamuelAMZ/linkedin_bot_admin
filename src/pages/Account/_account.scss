@@ -3,11 +3,11 @@
 
 .menu-tab-parent {
   background-color: white;
-  padding: 0 1rem;
+  // padding: 0 1rem;
   border-radius: 15px;
 
   .tab-bordered {
-    height: 4rem;
+    height: 2.5rem;
     font-size: 15px;
     text-transform: capitalize;
   }
@@ -27,11 +27,23 @@
 .account-details {
   width: 100%;
   margin: 0 auto;
-  margin-top: 2rem;
   background-color: $white;
+  padding: 1rem;
   border-radius: 10px;
+  box-shadow: 0 10px 10px 10px #8b8b8b13;
   padding: 2rem;
   height: fit-content;
+  border-bottom: 2px solid $accent;
+
+  &:hover {
+    background-color: $accent;
+
+    ul {
+      li {
+        color: $white !important;
+      }
+    }
+  }
 
   ul {
     display: flex;
@@ -39,11 +51,10 @@
     gap: 1rem;
 
     li {
-      font-size: 15px;
+      font-size: 14px;
 
       span {
         font-weight: 700;
-        text-decoration: underline;
       }
     }
   }
@@ -74,4 +85,8 @@
       gap: 1rem;
     }
   }
+}
+
+.account-quick-links {
+  grid-template-columns: 1fr 1fr !important;
 }

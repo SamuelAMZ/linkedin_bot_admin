@@ -4,12 +4,12 @@ import React from "react";
 import Header from "../../components/Header/Header";
 import Table from "../../components/Table/Table";
 
-const Indeed = () => {
-  const tableConf = { perPage: "20", target: "indeed-jobs" };
+const Schedules = () => {
+  const tableConf = { perPage: "7", target: "schedules" };
 
   return (
     <>
-      <Header page={"All Indeed Searches"} />
+      <Header page={"Schedules"} />
 
       <div className="searches-container centerer">
         {/* table */}
@@ -19,4 +19,4 @@ const Indeed = () => {
   );
 };
 
-export default Indeed;
+export default Schedules;

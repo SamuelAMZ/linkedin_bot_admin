@@ -17,6 +17,14 @@ import "react-loading-skeleton/dist/skeleton.css";
 // import notify
 import notif from "../../helpers/notif";
 
+// icons
+import { IoFilter } from "react-icons/io5";
+import { BsCheck2All } from "react-icons/bs";
+import { MdRemoveCircleOutline, MdScheduleSend } from "react-icons/md";
+import { VscDebugStart } from "react-icons/vsc";
+import { FaRegSave } from "react-icons/fa";
+import { TbExternalLink } from "react-icons/tb";
+
 const SingleSearch = () => {
   const params = useParams();
   const navigate = useNavigate();
@@ -43,19 +51,40 @@ const SingleSearch = () => {
       <Header page={"Single Search"} />
 
       <div className="centerer">
-        <div className="single-seach-container">
+        <div className="single-search-container">
+          {/* table start */}
           <div className="overflow-x-auto w-full">
+            {/* header */}
+            <div className={"table-header expand-search"}>
+              <div className="actions">
+                <button className="btn btn-outline changed">
+                  <MdRemoveCircleOutline /> <p>Exclude Selected Jobs</p>
+                </button>
+                <button className="btn btn-outline btn-primary changed">
+                  <BsCheck2All /> <p>Include Selected Jobs</p>
+                </button>
+
+                {searchData && searchData.code === "ok" && (
+                  <p>{searchData?.payload?.allResults.length} items</p>
+                )}
+              </div>
+            </div>
+            {/* table */}
             <table className="table table-zebra w-full">
               {/* head */}
               <thead>
                 <tr>
                   <th>
                     <label>
-                      <input type="checkbox" className="checkbox" />
+                      <input
+                        type="checkbox"
+                        className="checkbox checkbox-primary"
+                      />
                     </label>
                   </th>
                   <th>Company</th>
                   <th>Job Detail</th>
+                  <th>URL</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,9 +100,15 @@ const SingleSearch = () => {
                           <td>
                             <th>
                               <label>
-                                <input type="checkbox" className="checkbox" />
+                                <input
+                                  type="checkbox"
+                                  className="checkbox checkbox-primary"
+                                />
                               </label>
                             </th>
+                          </td>
+                          <td>
+                            <Skeleton count={1} />
                           </td>
                           <td>
                             <Skeleton count={1} />
@@ -90,11 +125,14 @@ const SingleSearch = () => {
                 {searchData?.payload?.allResults.map((elm) => {
                   return (
                     <tr>
-                      <th>
+                      <td>
                         <label>
-                          <input type="checkbox" className="checkbox" />
+                          <input
+                            type="checkbox"
+                            className="checkbox checkbox-primary"
+                          />
                         </label>
-                      </th>
+                      </td>
                       <td>
                         <div className="flex items-center space-x-3">
                           <div className="avatar">
@@ -104,14 +142,8 @@ const SingleSearch = () => {
                           </div>
                           <div>
                             <div className="font-bold">
-                              <a
-                                href={elm.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {elm.company.substr(0, 20)}
-                                {elm.company.length >= 20 && "..."}
-                              </a>
+                              {elm.company.substr(0, 15)}
+                              {elm.company.length >= 15 && "..."}
                             </div>
                             <div className="text-sm opacity-50">
                               {elm.location.substr(0, 20)}
@@ -121,11 +153,21 @@ const SingleSearch = () => {
                         </div>
                       </td>
                       <td>
-                        {elm.title}
+                        {elm.title.substr(0, 40)}
+                        {elm.title.length >= 40 && "..."}
                         <br />
                         <span className="badge badge-ghost badge-sm">
-                          {elm.location}
+                          {elm.location.substr(0, 20)}
+                          {elm.location.length >= 20 && "..."}
                         </span>
+                      </td>
+                      <td>
+                        <a href={elm?.url} target="_blank">
+                          <button className="btn btn-xs btn-primary visit-link">
+                            <p>Visit</p>
+                            <TbExternalLink />
+                          </button>
+                        </a>
                       </td>
                     </tr>
                   );
@@ -143,6 +185,54 @@ const SingleSearch = () => {
               </div>
             </div>
           </div>
+
+          {/* resume section */}
+          <div className="single-search-resume">
+            <h2>Actions Summary</h2>
+
+            <ul>
+              <li>
+                <p>
+                  You <span>excluded 10 jobs</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  We will apply to the <span>25 remaining jobs</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  Profile <span>"Software Engineer"</span> will be used for
+                  applying
+                </p>
+              </li>
+              <li>
+                <p>
+                  Account <span>"Linkedin - jhondoe@gm..."</span> will be used
+                  for applying
+                </p>
+              </li>
+            </ul>
+
+            <button className="btn btn-capitilized">Export data as CSV</button>
+          </div>
+        </div>
+
+        {/* next button */}
+        <div className="next-buttons">
+          <button className="btn btn-outline  gap-2  btn-capitilized">
+            Save & continue later
+            <FaRegSave />
+          </button>
+          <button className="btn btn-outline  gap-2 btn-primary btn-capitilized">
+            Schedule Applying Date
+            <MdScheduleSend />
+          </button>
+          <button className="btn btn-primary  gap-2 btn-capitilized">
+            Start Applying Now
+            <VscDebugStart />
+          </button>
         </div>
       </div>
     </>

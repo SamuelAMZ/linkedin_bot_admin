@@ -13,13 +13,16 @@ import UserContext from "../../contexts/UserContext";
 import { HiOutlineDocumentSearch } from "react-icons/hi";
 import { FiSearch } from "react-icons/fi";
 import { BiMessageSquareDots } from "react-icons/bi";
-import { TbBrandTelegram } from "react-icons/tb";
+import { TbBrandTelegram, TbBrandGoogleAnalytics } from "react-icons/tb";
 import { MdKeyboardArrowDown } from "react-icons/md";
 
 import { FiLinkedin } from "react-icons/fi";
 import { SiIndeed } from "react-icons/si";
 import { BiTime } from "react-icons/bi";
 import { AiOutlineSetting } from "react-icons/ai";
+import { CgProfile } from "react-icons/cg";
+import { AiOutlineUser } from "react-icons/ai";
+import { BsPlusLg } from "react-icons/bs";
 
 // helpers
 import postReq from "../../helpers/postReq";
@@ -52,13 +55,13 @@ const Home = () => {
 
   // chart
   const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
   ];
   const chartData = {
     labels,
@@ -220,6 +223,42 @@ const Home = () => {
                 <p className="desc">Visit and manage your settings</p>
               </div>
               <AiOutlineSetting />
+            </div>
+          </Link>
+          <Link to="/settings">
+            <div className="stat-jd">
+              <div>
+                <p>Accounts</p>
+                <p className="desc">Add a new job account</p>
+              </div>
+              <AiOutlineUser />
+            </div>
+          </Link>
+          <Link to="/settings/profiles">
+            <div className="stat-jd">
+              <div>
+                <p>Profiles</p>
+                <p className="desc">Add new profile for your job applying</p>
+              </div>
+              <CgProfile />
+            </div>
+          </Link>
+          <Link to="/analytics">
+            <div className="stat-jd">
+              <div>
+                <p>Analytics</p>
+                <p className="desc">Visit and manage your analytics</p>
+              </div>
+              <TbBrandGoogleAnalytics />
+            </div>
+          </Link>
+          <Link to="/new">
+            <div className="stat-jd">
+              <div>
+                <p>New search</p>
+                <p className="desc">Start a new search</p>
+              </div>
+              <BsPlusLg />
             </div>
           </Link>
         </div>

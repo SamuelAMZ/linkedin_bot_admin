@@ -73,7 +73,7 @@ const Sidebar = () => {
               <Link to={"/linkedin"}>
                 <li
                   className={
-                    location.pathname === "/linkedin" ? "active-menu" : ""
+                    location.pathname.includes("/linkedin") ? "active-menu" : ""
                   }
                 >
                   <FiLinkedin />
@@ -131,12 +131,12 @@ const Sidebar = () => {
                 </li>
               </Link>
               {/* new search btn */}
-              <Link to={"/new"} className="new-sidebar">
+              <a href="/new" className="new-sidebar">
                 <li>
                   <AiFillPlusCircle />
                   <p>New Search</p>
                 </li>
-              </Link>
+              </a>
               {/* logout */}
               <Link to={"/logout"}>
                 <li>

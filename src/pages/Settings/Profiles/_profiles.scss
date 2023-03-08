@@ -1,0 +1,19 @@
+//imports
+@import "../../../styles/global/variables";
+
+.profile-wrapper {
+  .icon {
+    p {
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 1;
+    }
+  }
+}
+
+.new-profile-form {
+  width: 100% !important;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}

@@ -1,0 +1,86 @@
+//imports
+@import "../../../styles/global/variables";
+
+.accounts-wrapper {
+  padding: 1.5rem 0;
+}
+.account-elements {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+
+  .account-element {
+    position: relative;
+
+    background-color: $white;
+    box-shadow: 0 10px 10px 10px #8b8b8b13;
+    padding: 1rem;
+    height: 10rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: $accent;
+
+      p {
+        color: $white;
+      }
+
+      svg {
+        color: $white;
+      }
+    }
+
+    .icon {
+      font-size: 30px;
+    }
+    p {
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+
+  .add-new {
+    background-color: $accent;
+    color: $white;
+    cursor: pointer;
+  }
+
+  .details {
+    .item {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      margin-top: 0.5rem;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+  }
+
+  .actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    .action {
+      font-size: 20px;
+      cursor: pointer;
+      &.edit {
+        color: $accent;
+      }
+      &.remove {
+        color: red;
+      }
+    }
+  }
+}

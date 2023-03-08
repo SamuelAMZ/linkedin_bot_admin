@@ -19,6 +19,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+
     div {
       display: flex;
       flex-direction: column;
@@ -27,6 +28,69 @@
 
     button {
       margin-top: 1rem;
+    }
+  }
+}
+
+.label-text {
+  font-size: 16px;
+}
+
+.switcher-mode {
+  margin: 0 auto;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  label {
+    cursor: pointer;
+  }
+}
+
+.select-search-type {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  a {
+    width: 250px;
+    background-color: $white;
+    box-shadow: 0 10px 10px 10px #8b8b8b13;
+    padding: 1rem;
+    height: 10rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: $accent;
+
+      p {
+        color: $white;
+      }
+
+      svg {
+        color: $white;
+      }
+    }
+
+    .icon {
+      font-size: 30px;
+    }
+    p {
+      font-size: 16px;
+      font-weight: 500;
     }
   }
 }
