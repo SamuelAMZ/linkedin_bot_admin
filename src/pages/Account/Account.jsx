@@ -20,6 +20,7 @@ import { AiOutlineHome, AiOutlineUser, AiFillPlusCircle } from "react-icons/ai";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
 import { HiOutlineLogout } from "react-icons/hi";
 import { CgProfile } from "react-icons/cg";
+import { RiProfileLine } from "react-icons/ri";
 
 const Account = () => {
   const location = useLocation();
@@ -64,6 +65,15 @@ const Account = () => {
         {location.pathname === "/account" && (
           <div className="account">
             <div className="quick-links stats-container-jd account-quick-links">
+              <Link to="/account-details">
+                <div className="stat-jd">
+                  <div>
+                    <p>Account details</p>
+                    <p className="desc">update your account details</p>
+                  </div>
+                  <RiProfileLine />
+                </div>
+              </Link>
               <Link to="#">
                 <div className="stat-jd">
                   <div>

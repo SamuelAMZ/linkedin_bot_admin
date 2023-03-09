@@ -22,6 +22,7 @@ import Analytics from "./pages/Analitycs/Analitycs";
 import Logout from "./pages/Logout/Logout";
 import Account from "./pages/Account/Account";
 import Schedules from "./pages/Schedules/Schedules";
+import AccountDetails from "./pages/AccountDetails/AccountDetails";
 
 // subpages
 import SingleSearch from "./pages/SingleSearch/SingleSearch";
@@ -94,6 +95,7 @@ const App = () => {
                     />
                   </Route>
                   <Route path="/logout" element={<Logout />} />
+                  <Route path="/account-details" element={<AccountDetails />} />
 
                   {/* single search page */}
                   <Route path="/search/:searchid" element={<SingleSearch />} />
