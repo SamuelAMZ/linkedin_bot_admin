@@ -61,6 +61,10 @@
       margin-top: 0.5rem;
       justify-content: flex-start;
       align-items: flex-start;
+
+      p.title {
+        text-transform: capitalize;
+      }
     }
   }
 

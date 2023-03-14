@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // contexts
 import UserContext from "../../../../contexts/UserContext";
@@ -13,6 +14,7 @@ import notif from "../../../../helpers/notif";
 const NewProfile = () => {
   // user session
   const { login, changeLogin } = useContext(UserContext);
+  const navigate = useNavigate();
 
   // upload csv handler
   const [cvUploadLoading, setCvUploadLoading] = useState(false);
@@ -152,7 +154,7 @@ const NewProfile = () => {
   useEffect(() => {
     // set profile data state
     setProfileData({
-      appAccountId: profileData.appAccountId,
+      accountLinked: profileData.accountLinked,
       title: profileData.title,
       cv,
       cl,
@@ -179,12 +181,53 @@ const NewProfile = () => {
     title: "",
     cv,
     cl,
-    appAccountId: "",
+    accountLinked: "",
   });
+  const [loadingAddNew, setLoadingAddNew] = useState(false);
   const handleCreateNewProfile = async (e) => {
     e.preventDefault();
 
-    console.log(profileData);
+    // sending request
+    try {
+      // loading
+      setLoadingAddNew(true);
+
+      // data
+      const dataToSend = { ...profileData, uid: login?.user?.id };
+
+      // send req
+      const serverMessage = await postReq(
+        dataToSend,
+        "/api/new-profile-account"
+      );
+
+      if (serverMessage.code === "bad") {
+        console.log(serverMessage.message);
+        notif(serverMessage.message);
+
+        return setLoadingAddNew(false);
+      }
+
+      // set data
+      if (serverMessage.code === "ok") {
+        notif(serverMessage.message);
+
+        // empty fields
+        setProfileData({
+          title: "",
+          cv,
+          cl,
+          accountLinked: "",
+        });
+
+        setLoadingAddNew(false);
+
+        // redirect to the profiles page
+        return navigate("/settings/profiles");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -204,7 +247,7 @@ const NewProfile = () => {
               value={profileData.title}
               onChange={(e) =>
                 setProfileData({
-                  appAccountId: profileData.appAccountId,
+                  accountLinked: profileData.accountLinked,
                   title: e.target.value,
                   cv,
                   cl,
@@ -237,10 +280,10 @@ const NewProfile = () => {
             <select
               required
               className="select select-bordered w-full"
-              value={profileData.appAccountId}
+              value={profileData.accountLinked}
               onChange={(e) =>
                 setProfileData({
-                  appAccountId: e.target.value,
+                  accountLinked: e.target.value,
                   title: profileData.title,
                   cv,
                   cl,
@@ -248,7 +291,7 @@ const NewProfile = () => {
               }
             >
               {allAccountsLoading && <option>Loading accounts...</option>}
-              <option>Choose oan account</option>
+              <option>Choose an account</option>
               {!allError &&
                 allAccountsData?.payload?.map((item, idx) => {
                   return (
@@ -260,10 +303,15 @@ const NewProfile = () => {
             </select>
           </div>
           <div className="btns">
-            {/* <button className="btn btn-outline w-full">add new question</button> */}
-            <button className="btn btn-primary w-full">
-              Create New Profile
-            </button>
+            {loadingAddNew ? (
+              <button className="btn btn-primary w-full loading">
+                Creating...
+              </button>
+            ) : (
+              <button className="btn btn-primary w-full">
+                Create New Profile
+              </button>
+            )}
           </div>
         </div>
       </form>
