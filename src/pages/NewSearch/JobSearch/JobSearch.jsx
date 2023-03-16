@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
+// contexts
+import UserContext from "../../../contexts/UserContext";
 
 // components
 import Header from "../../../components/Header/Header";
@@ -12,136 +15,105 @@ import { useQuery } from "react-query";
 
 // helpers
 import postReq from "../../../helpers/postReq";
+import notif from "../../../helpers/notif";
 
 const JobSearch = () => {
+  // user session
+  const { login, changeLogin } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  // states
   const [switchToLinkedinUrlMode, setSwitchToLinkedinUrlMode] = useState(false);
   const [searchData, setSearchData] = useState({
     keyword: "",
     country: "",
     platform: "linkedin",
-    email: "",
-    password: "",
+    onSite: "",
+    jobType: "",
+    salary: "",
+    underTen: false,
+    linkedinFilterUri: "",
+    accountId: "",
+    profileId: "",
   });
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleChanges = (e, type) => {
-    if (type === "keyword") {
-      setSearchData({
-        keyword: e.target.value,
-        country: searchData.country,
-        platform: searchData.platform,
-        email: searchData.email,
-        password: searchData.password,
-      });
-    }
-
-    if (type === "country") {
-      setSearchData({
-        keyword: searchData.keyword,
-        country: e.target.value,
-        platform: searchData.platform,
-        email: searchData.email,
-        password: searchData.password,
-      });
-    }
-
-    if (type === "platform") {
-      setSearchData({
-        keyword: searchData.keyword,
-        country: searchData.country,
-        platform: e.target.value,
-        email: searchData.email,
-        password: searchData.password,
-      });
-    }
-
-    if (type === "email") {
-      setSearchData({
-        keyword: searchData.keyword,
-        country: searchData.country,
-        platform: searchData.platform,
-        email: e.target.value,
-        password: searchData.password,
-      });
-    }
-
-    if (type === "password") {
-      setSearchData({
-        keyword: searchData.keyword,
-        country: searchData.country,
-        platform: searchData.platform,
-        email: searchData.email,
-        password: e.target.value,
-      });
-    }
-  };
-
-  const handleSubmitions = async () => {
-    const inputData = { ...searchData };
-
-    // send req
-    return await postReq(inputData, "/api/new");
-  };
-
-  const {
-    data,
-    isLoading,
-    isError,
-    isSuccess,
-    refetch: sendPost,
-  } = useQuery(["new", searchData], handleSubmitions, {
-    refetchOnWindowFocus: false,
-    enabled: false,
-  });
-
-  const handleNewSearch = (e) => {
-    e.preventDefault();
-
-    // send req
-    sendPost();
-  };
-
-  // move to single search page
-  useEffect(() => {
-    if (data && data.code === "ok") {
-      navigate(`/search/${data.data.searchId}`);
-    }
-  }, [data]);
-
-  // //// grab details from url
-  // useEffect(() => {
-  //   const urlData = location.search.replace("?", "").split("&");
-
-  //   const dataFromUrl = {
-  //     keyword: "",
-  //     country: "",
-  //     platform: "",
-  //     email: "",
-  //     password: "",
-  //   };
-  //   urlData.forEach((elm) => {
-  //     const temp = elm.split("=");
-  //     if (temp[0] === "keyword") {
-  //       dataFromUrl.keyword = decodeURI(temp[1]);
-  //     }
-  //     if (temp[0] === "num") {
-  //       dataFromUrl.numberOfPages = temp[1];
-  //     }
-  //     if (temp[0] === "urls") {
-  //       dataFromUrl.urls = temp[1];
-  //     }
-  //     if (temp[0] === "doms") {
-  //       dataFromUrl.domains = temp[1];
-  //     }
-  //   });
-  //   // setting data
-  //   setSearchData(dataFromUrl);
-  // }, []);
-
+  // switch to linkedin filter uri mode
   const linkedinUrlMode = (e) => {
     setSwitchToLinkedinUrlMode(e.target.checked);
+  };
+
+  // pull accounts
+  const getAllAccounts = async (e) => {
+    // send req
+    return await postReq({ uid: login?.user?.id }, "/api/all-app-accounts");
+  };
+  const {
+    data: allAccountsData,
+    isLoading: allAccountsLoading,
+    isError: allError,
+    refetch: allRefetch,
+  } = useQuery(["getallaccounts", login], getAllAccounts, {
+    refetchOnWindowFocus: false,
+    enabled: true,
+  });
+
+  // pull profiles
+  const getAllProfiles = async (e) => {
+    // send req
+    return await postReq(
+      { uid: login?.user?.id, accountLinked: searchData.accountId },
+      "/api/all-app-profiles"
+    );
+  };
+  const {
+    data: allProfilesData,
+    isLoading: allProfilesLoading,
+    isError: allProfilesError,
+    refetch: allProfilesRefetch,
+  } = useQuery(
+    ["getallprofiles", login, searchData.accountId],
+    getAllProfiles,
+    {
+      refetchOnWindowFocus: false,
+      enabled: true,
+    }
+  );
+
+  // handle new search
+  const [newSearchLoading, setNewSearchLoading] = useState(false);
+  const handleNewSearch = async (e) => {
+    e.preventDefault();
+
+    // sending request
+    try {
+      // loading
+      setNewSearchLoading(true);
+
+      // data
+      const dataToSend = { ...searchData, uid: login?.user?.id };
+
+      // send req
+      const serverMessage = await postReq(dataToSend, "/api/new");
+
+      if (serverMessage.code === "bad") {
+        notif(serverMessage.message);
+
+        return setNewSearchLoading(false);
+      }
+
+      // set data
+      if (serverMessage.code === "ok") {
+        notif(serverMessage.message);
+
+        setNewSearchLoading(false);
+
+        // redirect to the single search page
+        return navigate(`/search/${serverMessage.payload.searchId}`);
+      }
+    } catch (err) {
+      console.log(err);
+      notif("something wrong, please retry later");
+    }
   };
 
   return (
@@ -179,7 +151,9 @@ const JobSearch = () => {
                     placeholder="Product Manager"
                     className="input input-bordered w-full"
                     value={searchData.keyword}
-                    onChange={(e) => handleChanges(e, "keyword")}
+                    onChange={(e) =>
+                      setSearchData({ ...searchData, keyword: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -189,7 +163,9 @@ const JobSearch = () => {
                     id="platform"
                     className="select select-bordered w-full"
                     value={searchData.platform}
-                    onChange={(e) => handleChanges(e, "platform")}
+                    onChange={(e) =>
+                      setSearchData({ ...searchData, platform: e.target.value })
+                    }
                   >
                     <option value="linkedin">Linkedin</option>
                     <option value="indeed">Indeed</option>
@@ -204,7 +180,9 @@ const JobSearch = () => {
                     placeholder="United States"
                     className="input input-bordered w-full"
                     value={searchData.country}
-                    onChange={(e) => handleChanges(e, "country")}
+                    onChange={(e) =>
+                      setSearchData({ ...searchData, country: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -214,38 +192,56 @@ const JobSearch = () => {
                   <select
                     id="platform"
                     className="select select-bordered w-full"
+                    value={searchData.onSite}
+                    onChange={(e) =>
+                      setSearchData({ ...searchData, onSite: e.target.value })
+                    }
                   >
-                    <option>On site</option>
-                    <option>Remote</option>
-                    <option>Hybrid</option>
+                    <option value="onsite">On site</option>
+                    <option value="remote">Remote</option>
+                    <option value="hybrid">Hybrid</option>
                   </select>
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="type">Job type</label>
-                  <select id="type" className="select select-bordered w-full">
-                    <option>Full time</option>
-                    <option>Part Time</option>
-                    <option>Contract</option>
-                    <option>Temporary</option>
-                    <option>Volunteer</option>
-                    <option>Internship</option>
-                    <option>Other</option>
+                  <select
+                    id="type"
+                    className="select select-bordered w-full"
+                    value={searchData.jobType}
+                    onChange={(e) =>
+                      setSearchData({ ...searchData, jobType: e.target.value })
+                    }
+                  >
+                    <option value="fulltime">Full time</option>
+                    <option value="parttime">Part Time</option>
+                    <option value="contract">Contract</option>
+                    <option value="temtorary">Temporary</option>
+                    <option value="volunteer">Volunteer</option>
+                    <option value="internship">Internship</option>
+                    <option value="other">Other</option>
                   </select>
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="salary">Salary</label>
-                  <select id="type" className="select select-bordered w-full">
-                    <option>40k+</option>
-                    <option>60k+</option>
-                    <option>80k+</option>
-                    <option>100k+</option>
-                    <option>120k+</option>
-                    <option>140k+</option>
-                    <option>160k+</option>
-                    <option>180k+</option>
-                    <option>200k+</option>
+                  <select
+                    id="type"
+                    className="select select-bordered w-full"
+                    value={searchData.salary}
+                    onChange={(e) =>
+                      setSearchData({ ...searchData, salary: e.target.value })
+                    }
+                  >
+                    <option value="40k+">40k+</option>
+                    <option value="60k+">60k+</option>
+                    <option value="80k+">80k+</option>
+                    <option value="100k+">100k+</option>
+                    <option value="120k+">120k+</option>
+                    <option value="140k+">140k+</option>
+                    <option value="160k+">160k+</option>
+                    <option value="180k+">180k+</option>
+                    <option value="200k+">200k+</option>
                   </select>
                 </div>
 
@@ -256,6 +252,13 @@ const JobSearch = () => {
                       <input
                         type="checkbox"
                         className="toggle toggle-primary"
+                        value={searchData.underTen}
+                        onChange={(e) =>
+                          setSearchData({
+                            ...searchData,
+                            underTen: e.target.checked,
+                          })
+                        }
                       />
                     </label>
                   </div>
@@ -263,29 +266,74 @@ const JobSearch = () => {
 
                 <div className="form-group">
                   <label htmlFor="salary">Choose an account</label>
-                  <select id="type" className="select select-bordered w-full">
-                    <option>Choose</option>
-                    <option>linkedin --- johndoe@gmail...</option>
-                    <option>indeed --- louisdoe@gmail...</option>
+                  <select
+                    id="type"
+                    className="select select-bordered w-full"
+                    value={searchData.accountId}
+                    onChange={(e) => {
+                      setSearchData({
+                        ...searchData,
+                        accountId: e.target.value,
+                      });
+                    }}
+                  >
+                    {allAccountsLoading && <option>Loading accounts...</option>}
+                    <option>Choose an account</option>
+                    {!allError &&
+                      allAccountsData?.payload?.map((item, idx) => {
+                        return (
+                          <option
+                            value={item._id}
+                            key={idx}
+                          >{`${item.type} - ${item.email}`}</option>
+                        );
+                      })}
                   </select>
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="salary">Choose a profile</label>
-                  <select id="type" className="select select-bordered w-full">
-                    <option>Choose</option>
-                    <option>id: 46426465 --- softw...</option>
-                    <option>id: 6426428 --- produc...</option>
+                  <select
+                    id="type"
+                    className="select select-bordered w-full"
+                    value={searchData.profileId}
+                    onChange={(e) =>
+                      setSearchData({
+                        ...searchData,
+                        profileId: e.target.value,
+                      })
+                    }
+                  >
+                    {allProfilesLoading && <option>Loading Profiles...</option>}
+                    <option>Choose a profile</option>
+                    {!allProfilesError &&
+                      allProfilesData?.payload?.map((item, idx) => {
+                        return (
+                          <option
+                            value={item._id}
+                            key={idx}
+                          >{`${item.title} - ${item._id}`}</option>
+                        );
+                      })}
+
+                    {/* fallback message */}
+                    {!allProfilesError &&
+                      allProfilesData?.payload?.length < 1 && (
+                        <option>
+                          No profile linked to this account, link a profile to
+                          continue
+                        </option>
+                      )}
                   </select>
                 </div>
 
-                {isLoading ? (
+                {newSearchLoading ? (
                   <button className="btn btn-primary w-full loading">
-                    Scraping...
+                    Searching...
                   </button>
                 ) : (
                   <button className="btn btn-primary w-full">
-                    Start Scraping
+                    Start Searching
                   </button>
                 )}
               </div>
